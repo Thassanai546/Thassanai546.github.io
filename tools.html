@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Curated cyber tools for OSINT, threat intelligence, malware analysis, and more.">
+<title>Thassanai McCabe — Cyber Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" type="image/png" href="images/PC_.png">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #0D0D0D;
+  --fg:        #FFFFFF;
+  --dim:       #999999;
+  --faint:     #555555;
+  --border:    #222222;
+  --row-hover: #141414;
+  --green:     #00FF85;
+  --blue:      #1E90FF;
+  --pink:      #FF0099;
+  --ticker-h:  30px;
+  --f: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+}
+
+/* ─── CUSTOM CURSOR ─────────────────────────────────────── */
+* {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='4' fill='none' stroke='%2300FF85' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='1.5' fill='%2300FF85'/%3E%3Cline x1='16' y1='2' x2='16' y2='10' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='22' x2='16' y2='30' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='10' y2='16' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='22' y1='16' x2='30' y2='16' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, crosshair;
+}
+
+html { font-size: 14px; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f);
+  font-weight: 300;
+  line-height: 1.7;
+  padding: calc(3.5rem + var(--ticker-h)) 2rem 5rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ─── CVE TICKER ────────────────────────────────────────── */
+.cve-ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--ticker-h);
+  background: #050505;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-family: var(--f);
+  font-size: 0.67rem;
+}
+
+.cve-label {
+  flex-shrink: 0;
+  padding: 0 0.9rem;
+  color: var(--green);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  border-right: 1px solid var(--border);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #050505;
+  z-index: 1;
+}
+
+.cve-label-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.cve-track {
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.cve-inner {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: ticker 90s linear infinite;
+}
+.cve-track:hover .cve-inner { animation-play-state: paused; }
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.cve-item-id    { color: var(--green); font-weight: 500; margin-right: 0.45rem; }
+.cve-item-score { color: var(--pink);  margin-right: 0.45rem; }
+.cve-item-desc  { color: var(--dim);   margin-right: 0.3rem; }
+.cve-item-sep   { color: var(--faint); margin: 0 1.2rem; }
+
+/* ─── NAV ──────────────────────────────────────────────── */
+nav {
+  margin-bottom: 4rem;
+  display: flex;
+  width: fit-content;
+}
+
+.nav-box {
+  position: relative;
+  border: 1px solid var(--border);
+  display: flex;
+}
+
+@keyframes nav-color-cycle {
+  0%   { color: var(--green); }
+  33%  { color: var(--blue);  }
+  66%  { color: var(--pink);  }
+  100% { color: var(--green); }
+}
+
+.nav-link {
+  display: block;
+  width: 7.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--dim);
+  border-right: 1px solid var(--border);
+  transition: background 0.1s;
+  white-space: nowrap;
+  animation: nav-color-cycle 5s linear infinite;
+}
+.nav-link:last-child { border-right: none; }
+.nav-link:hover { animation: none; background: var(--pink); color: var(--bg); border-color: var(--pink); }
+.nav-link.active { animation: none; color: var(--green); }
+
+.nav-box .nav-link:nth-child(1) { animation-delay:    0s; }
+.nav-box .nav-link:nth-child(2) { animation-delay:  -1s; }
+.nav-box .nav-link:nth-child(3) { animation-delay:  -2s; }
+.nav-box .nav-link:nth-child(4) { animation-delay:  -3s; }
+.nav-box .nav-link:nth-child(5) { animation-delay:  -4s; }
+.nav-box .nav-link:nth-child(6) { animation-delay:  -5s; }
+
+/* ─── HEADER ───────────────────────────────────────────── */
+.header {
+  margin-bottom: 3.5rem;
+}
+
+.header-rule {
+  color: var(--green);
+  letter-spacing: -0.05em;
+  font-size: 0.85rem;
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.header-name {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+}
+
+.header-meta {
+  color: var(--dim);
+  font-size: 0.86rem;
+  line-height: 1.8;
+}
+
+/* ─── SECTIONS ─────────────────────────────────────────── */
+.block {
+  margin-bottom: 3.5rem;
+}
+
+.block-label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--green);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.block-label::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--border);
+  flex: 1;
+}
+
+/* ─── TOOL ROWS ─────────────────────────────────────────── */
+.tool-row {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  column-gap: 1.2rem;
+  padding: 0.9rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+  transition: background 0.12s;
+  margin: 0 -0.6rem;
+}
+.tool-row:first-child { border-top: 1px solid var(--border); }
+.tool-row:hover { background: var(--row-hover); }
+
+.tool-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  color: var(--green);
+}
+
+.tool-desc {
+  font-size: 0.77rem;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: 0.22rem;
+}
+
+.tool-tags {
+  font-size: 0.69rem;
+  color: var(--faint);
+}
+.tool-tags span + span::before { content: ' · '; }
+
+.tool-link {
+  font-size: 0.7rem;
+  color: var(--green);
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--green);
+  transition: all 0.12s;
+  white-space: nowrap;
+  align-self: start;
+  margin-top: 0.15rem;
+}
+.tool-link:hover {
+  background: var(--pink);
+  color: var(--bg);
+  border-color: var(--pink);
+}
+
+/* ─── FOOTER ───────────────────────────────────────────── */
+footer {
+  margin-top: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--faint);
+  font-size: 0.7rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 560px) {
+  html { font-size: 13px; }
+  body { padding: calc(2.5rem + var(--ticker-h)) 1.2rem 4rem; }
+
+  .tool-row { grid-template-columns: 1fr; }
+  .tool-link { display: none; }
+
+  nav { overflow-x: auto; }
+  footer { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- CVE TICKER -->
+<div class="cve-ticker" role="marquee" aria-label="Live CVE threat feed">
+  <div class="cve-label"><span class="cve-label-dot"></span>Actively Exploited:</div>
+  <div class="cve-track">
+    <div class="cve-inner" id="cve-inner">
+      <span class="cve-item-desc">Loading threat feed&hellip;</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav aria-label="Main navigation">
+  <div class="nav-box">
+    <a href="index.html#"      class="nav-link">Blog</a>
+    <a href="index.html#about" class="nav-link">About</a>
+    <a href="index.html#work"  class="nav-link">Work</a>
+    <a href="tools.html"       class="nav-link active">Tools</a>
+    <a href="https://github.com/Thassanai546" class="nav-link" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/thassanai-mcc/" class="nav-link" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-rule">── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──</div>
+  <h1 class="header-name">Cyber Tools</h1>
+  <div class="header-meta">
+    A curated collection of tools for threat research, OSINT, and analysis.
+  </div>
+</header>
+
+<!-- OSINT & RECON -->
+<section class="block" id="osint">
+  <div class="block-label">OSINT &amp; Recon</div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Shodan</div>
+      <div class="tool-desc">Search engine for internet-connected devices — find exposed services, open ports, and banners across the public internet.</div>
+      <div class="tool-tags"><span>Recon</span><span>Attack Surface</span><span>IoT</span></div>
+    </div>
+    <a href="https://www.shodan.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Censys</div>
+      <div class="tool-desc">Internet-wide scan data for hosts, certificates, and open ports — useful for mapping infrastructure and identifying attack surface.</div>
+      <div class="tool-tags"><span>Recon</span><span>Certificates</span><span>Attack Surface</span></div>
+    </div>
+    <a href="https://search.censys.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">OSINT Framework</div>
+      <div class="tool-desc">Categorized map of OSINT resources and tools covering people, usernames, domains, IP addresses, and much more.</div>
+      <div class="tool-tags"><span>OSINT</span><span>Resource Map</span></div>
+    </div>
+    <a href="https://osintframework.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">SecurityTrails</div>
+      <div class="tool-desc">Historical DNS records, WHOIS data, and subdomain enumeration — essential for tracking infrastructure changes over time.</div>
+      <div class="tool-tags"><span>DNS</span><span>WHOIS</span><span>Subdomains</span></div>
+    </div>
+    <a href="https://securitytrails.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">URLScan.io</div>
+      <div class="tool-desc">Sandbox scanner that visits a URL and captures a full screenshot, DOM, network requests, and indicators — safe way to inspect suspicious links.</div>
+      <div class="tool-tags"><span>URL Analysis</span><span>Phishing</span><span>Sandbox</span></div>
+    </div>
+    <a href="https://urlscan.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">IntelX</div>
+      <div class="tool-desc">Search engine indexing dark web content, data breaches, paste sites, and leaked documents — useful for finding exposed credentials and mentions.</div>
+      <div class="tool-tags"><span>Dark Web</span><span>Leaked Data</span><span>OSINT</span></div>
+    </div>
+    <a href="https://intelx.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">DNSDumpster</div>
+      <div class="tool-desc">Free domain research tool that discovers hosts related to a domain — maps out DNS records, MX, TXT, and provides a visual graph.</div>
+      <div class="tool-tags"><span>DNS</span><span>Recon</span><span>Domain Mapping</span></div>
+    </div>
+    <a href="https://dnsdumpster.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">BuiltWith</div>
+      <div class="tool-desc">Identify the technology stack behind any website — CMS, frameworks, analytics, CDN, hosting, and more.</div>
+      <div class="tool-tags"><span>Tech Stack</span><span>Fingerprinting</span></div>
+    </div>
+    <a href="https://builtwith.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+</section>
+
+<!-- THREAT INTELLIGENCE -->
+<section class="block" id="threat-intel">
+  <div class="block-label">Threat Intelligence</div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">VirusTotal</div>
+      <div class="tool-desc">Scan files, URLs, IPs, and domains against 70+ antivirus engines and threat intelligence feeds in a single query.</div>
+      <div class="tool-tags"><span>IOC</span><span>Malware</span><span>URL Scanning</span></div>
+    </div>
+    <a href="https://www.virustotal.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">AbuseIPDB</div>
+      <div class="tool-desc">Community-driven IP reputation database — check whether an IP has been reported for scanning, brute force, or malicious activity.</div>
+      <div class="tool-tags"><span>IP Reputation</span><span>IOC</span></div>
+    </div>
+    <a href="https://www.abuseipdb.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">AlienVault OTX</div>
+      <div class="tool-desc">Open Threat Exchange — community-shared threat pulses with IOCs, TTPs, and adversary infrastructure data you can query and subscribe to.</div>
+      <div class="tool-tags"><span>IOC</span><span>Threat Pulses</span><span>Community Intel</span></div>
+    </div>
+    <a href="https://otx.alienvault.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">ThreatFox</div>
+      <div class="tool-desc">Abuse.ch platform for sharing malware IOCs — query C2 servers, malware hashes, and domains in real time.</div>
+      <div class="tool-tags"><span>IOC</span><span>C2</span><span>Malware</span></div>
+    </div>
+    <a href="https://threatfox.abuse.ch" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">GreyNoise</div>
+      <div class="tool-desc">Classifies internet background noise vs. targeted activity — helps distinguish mass scanning from deliberate attacks in your logs.</div>
+      <div class="tool-tags"><span>IP Context</span><span>Noise Reduction</span><span>Threat Intel</span></div>
+    </div>
+    <a href="https://www.greynoise.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">MalwareBazaar</div>
+      <div class="tool-desc">Abuse.ch repository of malware samples — search by hash, tag, or signature and download samples for analysis.</div>
+      <div class="tool-tags"><span>Malware Samples</span><span>Hash Lookup</span></div>
+    </div>
+    <a href="https://bazaar.abuse.ch" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+</section>
+
+<!-- MALWARE ANALYSIS -->
+<section class="block" id="malware">
+  <div class="block-label">Malware Analysis</div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Any.run</div>
+      <div class="tool-desc">Interactive online sandbox — execute malware and watch it behave in real time. Useful for observing network connections, dropped files, and persistence.</div>
+      <div class="tool-tags"><span>Sandbox</span><span>Dynamic Analysis</span><span>Interactive</span></div>
+    </div>
+    <a href="https://any.run" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Hybrid Analysis</div>
+      <div class="tool-desc">Free malware analysis by CrowdStrike — submit samples and get a detailed behavioral report including network traffic and registry changes.</div>
+      <div class="tool-tags"><span>Sandbox</span><span>Dynamic Analysis</span><span>Free</span></div>
+    </div>
+    <a href="https://www.hybrid-analysis.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Triage</div>
+      <div class="tool-desc">Fast automated malware triage sandbox by Hatching — strong on ransomware family detection and config extraction.</div>
+      <div class="tool-tags"><span>Sandbox</span><span>Ransomware</span><span>Config Extraction</span></div>
+    </div>
+    <a href="https://tria.ge" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Joe Sandbox</div>
+      <div class="tool-desc">Deep malware analysis platform supporting Windows, macOS, Linux, and Android — detailed behavioral and static analysis reports.</div>
+      <div class="tool-tags"><span>Sandbox</span><span>Multi-Platform</span><span>Static Analysis</span></div>
+    </div>
+    <a href="https://www.joesandbox.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+</section>
+
+<!-- VULNERABILITY RESEARCH -->
+<section class="block" id="vuln">
+  <div class="block-label">Vulnerability Research</div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">NVD — National Vulnerability Database</div>
+      <div class="tool-desc">NIST's authoritative CVE database with CVSS scores, CWE mappings, and affected product data. The canonical source for vulnerability details.</div>
+      <div class="tool-tags"><span>CVE</span><span>CVSS</span><span>NIST</span></div>
+    </div>
+    <a href="https://nvd.nist.gov" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Exploit-DB</div>
+      <div class="tool-desc">Offensive Security's public archive of exploits and vulnerable software — searchable by CVE, platform, or application type.</div>
+      <div class="tool-tags"><span>Exploits</span><span>CVE</span><span>PoC</span></div>
+    </div>
+    <a href="https://www.exploit-db.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">CISA KEV Catalog</div>
+      <div class="tool-desc">CISA's Known Exploited Vulnerabilities catalog — the definitive list of CVEs being actively exploited in the wild, updated regularly.</div>
+      <div class="tool-tags"><span>Actively Exploited</span><span>CVE</span><span>CISA</span></div>
+    </div>
+    <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Packet Storm</div>
+      <div class="tool-desc">Long-running security archive hosting exploits, advisories, tools, and whitepapers — useful for finding older PoCs and research.</div>
+      <div class="tool-tags"><span>Exploits</span><span>Advisories</span><span>Archive</span></div>
+    </div>
+    <a href="https://packetstormsecurity.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+</section>
+
+<!-- TEMPORARY & PRIVACY -->
+<section class="block" id="privacy">
+  <div class="block-label">Temporary &amp; Privacy</div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">10 Minute Mail</div>
+      <div class="tool-desc">Disposable inbox that expires after 10 minutes — useful for one-off registrations without exposing a real address.</div>
+      <div class="tool-tags"><span>Temp Email</span><span>Privacy</span></div>
+    </div>
+    <a href="https://10minutemail.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Guerrilla Mail</div>
+      <div class="tool-desc">Disposable email with a custom address option — inbox persists in-session and supports attachments. Good for longer-lived temp accounts.</div>
+      <div class="tool-tags"><span>Temp Email</span><span>Privacy</span></div>
+    </div>
+    <a href="https://www.guerrillamail.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">HaveIBeenPwned</div>
+      <div class="tool-desc">Check whether an email address or password has appeared in a known data breach — Troy Hunt's widely trusted breach notification service.</div>
+      <div class="tool-tags"><span>Breach Check</span><span>Credentials</span><span>Privacy</span></div>
+    </div>
+    <a href="https://haveibeenpwned.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Browserling</div>
+      <div class="tool-desc">Open suspicious URLs inside an isolated remote browser — keeps malicious redirects, drive-bys, and trackers away from your real machine.</div>
+      <div class="tool-tags"><span>Isolated Browsing</span><span>Phishing</span><span>Privacy</span></div>
+    </div>
+    <a href="https://www.browserling.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+</section>
+
+<!-- UTILITIES -->
+<section class="block" id="utils">
+  <div class="block-label">Utilities</div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">CyberChef</div>
+      <div class="tool-desc">GCHQ's "Cyber Swiss Army Knife" — encode, decode, encrypt, decrypt, parse, and transform data with a drag-and-drop recipe builder. Indispensable.</div>
+      <div class="tool-tags"><span>Encoding</span><span>Crypto</span><span>Forensics</span><span>GCHQ</span></div>
+    </div>
+    <a href="https://gchq.github.io/CyberChef" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">IPinfo</div>
+      <div class="tool-desc">Detailed IP address data — geolocation, ASN, carrier, hosting provider, and abuse contact information in a clean API and web interface.</div>
+      <div class="tool-tags"><span>IP Lookup</span><span>ASN</span><span>Geolocation</span></div>
+    </div>
+    <a href="https://ipinfo.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">MXToolbox</div>
+      <div class="tool-desc">Email delivery diagnostics — check MX records, SPF, DKIM, DMARC, blacklist status, and perform DNS lookups in one place.</div>
+      <div class="tool-tags"><span>DNS</span><span>Email Security</span><span>Blacklist</span></div>
+    </div>
+    <a href="https://mxtoolbox.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">JWT.io</div>
+      <div class="tool-desc">Decode, verify, and generate JSON Web Tokens in the browser — useful for inspecting tokens during web app testing.</div>
+      <div class="tool-tags"><span>JWT</span><span>Web App</span><span>Auth</span></div>
+    </div>
+    <a href="https://jwt.io" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+
+  <div class="tool-row">
+    <div>
+      <div class="tool-name">Regex101</div>
+      <div class="tool-desc">Interactive regex tester and debugger with a full explanation panel — supports PCRE, Python, JavaScript, and Go flavours.</div>
+      <div class="tool-tags"><span>Regex</span><span>Parsing</span><span>Debugging</span></div>
+    </div>
+    <a href="https://regex101.com" class="tool-link" target="_blank" rel="noopener">visit ↗</a>
+  </div>
+</section>
+
+<footer>
+  <span>Look After Yourself -Thassanai McCabe</span>
+  <span>2026</span>
+</footer>
+
+<script>
+(async () => {
+  const el = document.getElementById('cve-inner');
+  const escHtml = s => s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(
+      'https://services.nvd.nist.gov/rest/json/cves/2.0?hasKev',
+      { signal: ctrl.signal }
+    );
+    clearTimeout(timer);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+
+    const items = d.vulnerabilities
+      .sort((a, b) => new Date(b.cve.published) - new Date(a.cve.published))
+      .map(({ cve }) => {
+        const id   = escHtml(cve.id);
+        const desc = escHtml((cve.descriptions.find(x => x.lang === 'en')?.value ?? '').slice(0, 100));
+        const m    = cve.metrics;
+        const score = m?.cvssMetricV31?.[0]?.cvssData?.baseScore
+                   ?? m?.cvssMetricV30?.[0]?.cvssData?.baseScore
+                   ?? m?.cvssMetricV2?.[0]?.cvssData?.baseScore
+                   ?? '?';
+        return `<span class="cve-item-id">${id}</span>`
+             + `<span class="cve-item-score">CVSS&nbsp;${score}</span>`
+             + `<span class="cve-item-desc">${desc}</span>`
+             + `<span class="cve-item-sep">//</span>`;
+      }).join('');
+
+    el.innerHTML = items + items;
+
+    const halfW    = el.scrollWidth / 2;
+    const duration = Math.max(40, halfW / 90);
+    el.style.animationDuration = duration + 's';
+  } catch {
+    document.querySelector('.cve-ticker').style.display = 'none';
+  }
+})();
+</script>
+</body>
+</html>
