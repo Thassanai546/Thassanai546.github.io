@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Thassanai McCabe — Cyber Threat Intelligence Researcher at ReliaQuest, Ireland.">
+<title>Thassanai McCabe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" type="image/png" href="images/PC_.png">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #0D0D0D;
+  --fg:        #FFFFFF;
+  --dim:       #999999;
+  --faint:     #555555;
+  --border:    #222222;
+  --row-hover: #141414;
+  --green:     #00FF85;
+  --blue:      #1E90FF;
+  --pink:      #FF0099;
+  --ticker-h:  30px;
+  --f: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+}
+
+/* ─── CUSTOM CURSOR ─────────────────────────────────────── */
+* {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='4' fill='none' stroke='%2300FF85' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='1.5' fill='%2300FF85'/%3E%3Cline x1='16' y1='2' x2='16' y2='10' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='22' x2='16' y2='30' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='10' y2='16' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='22' y1='16' x2='30' y2='16' stroke='%2300FF85' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, crosshair;
+}
+
+html { font-size: 14px; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f);
+  font-weight: 300;
+  line-height: 1.7;
+  padding: calc(3.5rem + var(--ticker-h)) 2rem 5rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ─── CVE TICKER ────────────────────────────────────────── */
+.cve-ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--ticker-h);
+  background: #050505;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-family: var(--f);
+  font-size: 0.67rem;
+}
+
+.cve-label {
+  flex-shrink: 0;
+  padding: 0 0.9rem;
+  color: var(--green);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  border-right: 1px solid var(--border);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #050505;
+  z-index: 1;
+}
+
+.cve-label-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.cve-track {
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.cve-inner {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: ticker 90s linear infinite;
+}
+.cve-track:hover .cve-inner { animation-play-state: paused; }
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.cve-item-id    { color: var(--green); font-weight: 500; margin-right: 0.45rem; }
+.cve-item-score { color: var(--pink);  margin-right: 0.45rem; }
+.cve-item-desc  { color: var(--dim);   margin-right: 0.3rem; }
+.cve-item-sep   { color: var(--faint); margin: 0 1.2rem; }
+
+/* ─── NAV ──────────────────────────────────────────────── */
+nav {
+  margin-bottom: 4rem;
+  display: flex;
+  width: fit-content;
+}
+
+.nav-box {
+  position: relative;
+  border: 1px solid var(--border);
+  display: flex;
+}
+
+@keyframes nav-color-cycle {
+  0%   { color: var(--green); }
+  33%  { color: var(--blue);  }
+  66%  { color: var(--pink);  }
+  100% { color: var(--green); }
+}
+
+.nav-link {
+  display: block;
+  width: 7.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--dim);
+  border-right: 1px solid var(--border);
+  transition: background 0.1s;
+  white-space: nowrap;
+  animation: nav-color-cycle 5s linear infinite;
+}
+.nav-link:last-child { border-right: none; }
+.nav-link:hover { animation: none; background: var(--pink); color: var(--bg); border-color: var(--pink); }
+
+.nav-box .nav-link:nth-child(1) { animation-delay:    0s; }
+.nav-box .nav-link:nth-child(2) { animation-delay:  -1s; }
+.nav-box .nav-link:nth-child(3) { animation-delay:  -2s; }
+.nav-box .nav-link:nth-child(4) { animation-delay:  -3s; }
+.nav-box .nav-link:nth-child(5) { animation-delay:  -4s; }
+
+/* ─── HEADER ───────────────────────────────────────────── */
+.header {
+  margin-bottom: 3.5rem;
+}
+
+.header-rule {
+  color: var(--green);
+  letter-spacing: -0.05em;
+  font-size: 0.85rem;
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.header-name {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.header-star {
+  height: 1.5em;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.header-meta {
+  color: var(--dim);
+  font-size: 0.86rem;
+  line-height: 1.8;
+}
+
+.header-meta a {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: transparent;
+}
+.header-meta a:hover { text-decoration-color: var(--blue); }
+
+/* ─── SECTIONS ─────────────────────────────────────────── */
+.block {
+  margin-bottom: 3.5rem;
+}
+
+.block-label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--green);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.block-label::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--border);
+  flex: 1;
+}
+
+/* ─── ABOUT ────────────────────────────────────────────── */
+.about p {
+  font-size: 0.88rem;
+  color: var(--fg);
+  max-width: 600px;
+  margin-bottom: 0.7rem;
+}
+.about p:last-child { margin-bottom: 0; }
+
+/* ─── WORK ─────────────────────────────────────────────── */
+.work-row {
+  display: grid;
+  grid-template-columns: 2.8rem 1fr max-content;
+  column-gap: 1.2rem;
+  padding: 0.95rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+  transition: background 0.12s;
+  margin: 0 -0.6rem;
+}
+.work-row:first-child { border-top: 1px solid var(--border); }
+.work-row:hover { background: var(--row-hover); }
+
+.work-idx {
+  font-size: 0.7rem;
+  color: var(--faint);
+  padding-top: 0.15rem;
+  text-align: right;
+}
+
+.work-title {
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 0.22rem;
+  color: var(--blue);
+}
+.work-desc {
+  font-size: 0.77rem;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: 0.28rem;
+}
+.work-stack {
+  font-size: 0.69rem;
+  color: var(--faint);
+}
+.work-stack span + span::before { content: ' · '; }
+
+.work-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding-top: 0.15rem;
+}
+.work-link {
+  font-size: 0.7rem;
+  color: var(--green);
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--green);
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.work-link:hover {
+  background: var(--pink);
+  color: var(--bg);
+  border-color: var(--pink);
+}
+
+/* ─── FOOTER ───────────────────────────────────────────── */
+.footer-gif {
+  display: block;
+  margin: 0 auto;
+  width: 100px;
+  height: auto;
+}
+
+footer {
+  margin-top: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--faint);
+  font-size: 0.7rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 560px) {
+  html { font-size: 13px; }
+  body { padding: calc(2.5rem + var(--ticker-h)) 1.2rem 4rem; }
+
+  .work-row { grid-template-columns: 2.2rem 1fr; }
+  .work-links { display: none; }
+
+  nav { overflow-x: auto; }
+  footer { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- CVE TICKER -->
+<div class="cve-ticker" role="marquee" aria-label="Live CVE threat feed">
+  <div class="cve-label"><span class="cve-label-dot"></span>Actively Exploited:</div>
+  <div class="cve-track">
+    <div class="cve-inner" id="cve-inner">
+      <span class="cve-item-desc">Loading threat feed&hellip;</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav aria-label="Main navigation">
+  <div class="nav-box">
+    <a href="#"       class="nav-link">Blog</a>
+    <a href="#about"  class="nav-link">About</a>
+    <a href="#work"   class="nav-link">Work</a>
+    <a href="https://github.com/Thassanai546" class="nav-link" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/thassanai-mcc/" class="nav-link" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-rule">── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──</div>
+  <h1 class="header-name"><img src="images/star.gif" alt="" class="header-star">Thassanai McCabe</h1>
+  <div class="header-meta">
+    Cyber Threat Intelligence Researcher &mdash; Ireland<br>
+    <a href="https://www.reliaquest.com" target="_blank" rel="noopener">ReliaQuest</a> &middot; BSc Cybercrime &amp; IT Security, First Class Honours
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section class="block" id="about">
+  <div class="block-label">About</div>
+  <div class="about">
+    <h2>From the Field to Threat Research</h2>
+    <p>
+      Originally from Thailand and now based in Ireland, my cybersecurity journey began in Incident Response at ReliaQuest. In the SOC, my days were defined by high-pressure environments, live triage, and containing active compromises. I spent countless hours digging through raw event logs, tracing lateral movement, and analyzing endpoint data to eject threat actors from enterprise networks. I learned an incredible amount from my peers and mentors in this role (Thank you SGA &lt;3).
+    </p>
+    <p>
+      Witnessing these attacks firsthand taught me how attackers operate, but it also sparked a big shift in my perspective. Evicting an attacker solves today's emergency, but true defense requires understanding where they are going tomorrow. I wanted to move from a reactive posture of stopping the bleeding to a proactive one.
+    </p>
+    <p>
+      This realization drove my transition into Cyber Threat Intelligence.
+    </p>
+    <h3>What I Do Today</h3>
+    <p>
+      As a Threat Intelligence Researcher at ReliaQuest, I use my frontline IR experience to track the adversary for the wider security community.
+      My work focuses on looking outside the enterprise perimeter to study the threat actors behind the keyboard, their financial motives,
+      and their global infrastructure.
+    </p>
+    <p>
+      Operating under the broader threat research umbrella allows me to collaborate closely with our threat hunting and detection engineering teams.
+      I am incredibly fortunate to work alongside brilliant people who inspire and push me forward every day.
+      This environment allows me to contribute to a mission much larger than myself, protecting organizations on a global scale.
+    </p>
+    <p>
+      One of the most rewarding outcomes of this work is seeing original research I produce get shared and discussed across the industry,
+      from major technical news vendors like BleepingComputer to global cybersecurity forums.
+    </p>
+    <h3>Life in CTI</h3>
+    <p>&#10686; Mapping out command-and-control (C2) networks, tracking bulletproof hosting providers, and identifying malicious domains before they are weaponized in active campaigns.
+      <br>&#10686; Researching underground forums, marketplaces, and ransomware-as-a-service (RaaS) leak sites to track Initial Access Brokers (IABs) and leaked credentials.
+      <br>&#10686; Studying the financial structures and monetization trends that fuel modern cybercriminal networks to help organizations anticipate attacks.
+    </p>
+    <h3>Outside the SOC</h3>
+    <p>
+      When I am offline and away from the screen, I teach myself how to work on cars after being inspired by my dad.
+      When not under the hood I am collecting Pokemon cards and other various tidbits!
+    </p>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="block" id="work">
+  <div class="block-label">Recent Publications</div>
+
+  <div class="work-row">
+    <span class="work-idx">001</span>
+    <div>
+      <div class="work-title">Help-Desk Lures Drop KongTuke's Evolved ModeloRAT</div>
+      <div class="work-desc">KongTuke pivots from web-based ClickFix to external Microsoft Teams chats, impersonating help-desk staff to deliver an evolved ModeloRAT toolkit that achieves persistent access within five minutes via four distinct persistence mechanisms and three independent C2 paths. w/ Debarshi Ghosh &mdash; May 2026.</div>
+      <div class="work-stack"><span>Malware Analysis</span><span>Threat Intelligence</span><span>Initial Access Brokers</span></div>
+    </div>
+    <div class="work-links">
+      <a href="https://reliaquest.com/blog/threat-spotlight-help-desk-lures-drop-kongtukes-evolved-modelorat/" class="work-link" target="_blank" rel="noopener">report ↗</a>
+    </div>
+  </div>
+
+  <div class="work-row">
+    <span class="work-idx">002</span>
+    <div>
+      <div class="work-title">DeepLoad Malware Pairs ClickFix Delivery with AI-Generated Evasion</div>
+      <div class="work-desc">ClickFix-delivered loader using AI-generated variable-name obfuscation to defeat file-based scanners, executing payloads entirely in memory, injecting into LockAppHost.exe, and reinfecting hosts via WMI event subscriptions days after remediation. w/ Andrew Currie &mdash; Mar 2026.</div>
+      <div class="work-stack"><span>Malware Analysis</span><span>ClickFix</span><span>Evasion Techniques</span><span>WMI</span></div>
+    </div>
+    <div class="work-links">
+      <a href="https://reliaquest.com/blog/threat-spotlight-deepload-malware-pairs-clickfix-delivery-with-ai-generated-evasion/" class="work-link" target="_blank" rel="noopener">report ↗</a>
+    </div>
+  </div>
+
+  <div class="work-row">
+    <span class="work-idx">003</span>
+    <div>
+      <div class="work-title">What's Trending: Top Cyber Attacker Techniques, Sep&ndash;Nov 2025</div>
+      <div class="work-desc">Quarterly trend analysis across the ReliaQuest customer base, finding spearphishing and drive-by compromise dominating initial access while ransomware groups systematically target unpatched known vulnerabilities over zero-days &mdash; Jan 2026.</div>
+      <div class="work-stack"><span>Threat Trends</span><span>MITRE ATT&amp;CK</span><span>Ransomware</span><span>Initial Access</span></div>
+    </div>
+    <div class="work-links">
+      <a href="https://reliaquest.com/blog/threat-spotlight-whats-trending-top-cyber-attacker-techniques-september/" class="work-link" target="_blank" rel="noopener">report ↗</a>
+    </div>
+  </div>
+
+  <div class="work-row">
+    <span class="work-idx">004</span>
+    <div>
+      <div class="work-title">Speed, Scale, and Stealth: How Axios Powers Automated Phishing</div>
+      <div class="work-desc">Documented a 241% surge in Axios user-agent activity between June&ndash;August 2025 as attackers adopted the HTTP library to automate phishing at scale; paired with Microsoft Direct Send, the technique achieved a 70% credential-theft success rate versus 9.3% for traditional phishing &mdash; Sep 2025.</div>
+      <div class="work-stack"><span>Phishing</span><span>Credential Theft</span><span>Automation</span><span>Microsoft 365</span></div>
+    </div>
+    <div class="work-links">
+      <a href="https://reliaquest.com/blog/threat-spotlight-attackers-exploit-axios-for-automated-phishing/" class="work-link" target="_blank" rel="noopener">report ↗</a>
+    </div>
+  </div>
+
+  <div class="work-row">
+    <span class="work-idx">005</span>
+    <div>
+      <div class="work-title">First Look at CVE-2025-54309: Dissecting the Latest CrushFTP Exploit</div>
+      <div class="work-desc">First published analysis of an actively exploited CrushFTP AS2 validation flaw enabling unauthenticated administrative access; documented attacker attempts to backdoor the server and how policy-based controls and IP allowlisting blocked full compromise. w/ Alexa Feminella &amp; Francisco Hernandez &mdash; Jul 2025.</div>
+      <div class="work-stack"><span>CVE Analysis</span><span>Vulnerability Research</span><span>CrushFTP</span><span>Exploit Development</span></div>
+    </div>
+    <div class="work-links">
+      <a href="https://reliaquest.com/blog/threat-spotlight-cve-2025-54309-crushftp-exploit/" class="work-link" target="_blank" rel="noopener">report ↗</a>
+    </div>
+  </div>
+</section>
+
+<img src="images/29052026.gif" alt="" class="footer-gif">
+
+<footer>
+  <span>Look After Yourself -Thassanai McCabe</span>
+  <span>2026</span>
+</footer>
+
+<script>
+(async () => {
+  const el = document.getElementById('cve-inner');
+  const escHtml = s => s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(
+      'https://services.nvd.nist.gov/rest/json/cves/2.0?hasKev',
+      { signal: ctrl.signal }
+    );
+    clearTimeout(timer);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+
+    const items = d.vulnerabilities
+      .sort((a, b) => new Date(b.cve.published) - new Date(a.cve.published))
+      .map(({ cve }) => {
+        const id   = escHtml(cve.id);
+        const desc = escHtml((cve.descriptions.find(x => x.lang === 'en')?.value ?? '').slice(0, 100));
+        const m    = cve.metrics;
+        const score = m?.cvssMetricV31?.[0]?.cvssData?.baseScore
+                   ?? m?.cvssMetricV30?.[0]?.cvssData?.baseScore
+                   ?? m?.cvssMetricV2?.[0]?.cvssData?.baseScore
+                   ?? '?';
+        return `<span class="cve-item-id">${id}</span>`
+             + `<span class="cve-item-score">CVSS&nbsp;${score}</span>`
+             + `<span class="cve-item-desc">${desc}</span>`
+             + `<span class="cve-item-sep">//</span>`;
+      }).join('');
+
+    el.innerHTML = items + items;
+
+    const halfW    = el.scrollWidth / 2;
+    const duration = Math.max(40, halfW / 90);
+    el.style.animationDuration = duration + 's';
+  } catch {
+    document.querySelector('.cve-ticker').style.display = 'none';
+  }
+})();
+</script>
+</body>
+</html>
