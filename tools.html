@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Curated cyber tools for OSINT, threat intelligence, malware analysis, and more.">
-<title>Thassanai McCabe — Cyber Tools</title>
+<title>Cyber Toolbox</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="icon" type="image/png" href="images/PC_.png">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@ body {
   font-family: var(--f);
   font-weight: 300;
   line-height: 1.7;
-  padding: calc(3.5rem + var(--ticker-h)) 2rem 5rem;
+  padding: 3.5rem 2rem 5rem;
   max-width: 760px;
   margin: 0 auto;
 }
@@ -140,7 +140,7 @@ nav {
 
 .nav-link {
   display: block;
-  width: 7.5rem;
+  width: 7rem;
   padding: 0.35rem 0.5rem;
   font-size: 0.76rem;
   letter-spacing: 0.12em;
@@ -162,6 +162,7 @@ nav {
 .nav-box .nav-link:nth-child(4) { animation-delay:  -3s; }
 .nav-box .nav-link:nth-child(5) { animation-delay:  -4s; }
 .nav-box .nav-link:nth-child(6) { animation-delay:  -5s; }
+.nav-box .nav-link:nth-child(7) { animation-delay:  -6s; }
 
 /* ─── HEADER ───────────────────────────────────────────── */
 .header {
@@ -277,10 +278,40 @@ footer {
   border-top: 1px solid var(--border);
 }
 
+/* ─── SCROLL TO TOP ─────────────────────────────────────── */
+#scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid var(--green);
+  color: var(--green);
+  background: var(--bg);
+  font-family: var(--f);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, background 0.12s, color 0.12s, border-color 0.12s;
+  z-index: 99;
+}
+#scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+#scroll-top:hover {
+  background: var(--pink);
+  color: var(--bg);
+  border-color: var(--pink);
+}
+
 /* ─── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 560px) {
   html { font-size: 13px; }
-  body { padding: calc(2.5rem + var(--ticker-h)) 1.2rem 4rem; }
+  body { padding: 2.5rem 1.2rem 4rem; }
 
   .tool-row { grid-template-columns: 1fr; }
   .tool-link { display: none; }
@@ -292,27 +323,8 @@ footer {
 </head>
 <body>
 
-<!-- CVE TICKER -->
-<div class="cve-ticker" role="marquee" aria-label="Live CVE threat feed">
-  <div class="cve-label"><span class="cve-label-dot"></span>Actively Exploited:</div>
-  <div class="cve-track">
-    <div class="cve-inner" id="cve-inner">
-      <span class="cve-item-desc">Loading threat feed&hellip;</span>
-    </div>
-  </div>
-</div>
-
 <!-- NAV -->
-<nav aria-label="Main navigation">
-  <div class="nav-box">
-    <a href="index.html#"      class="nav-link">Blog</a>
-    <a href="index.html#about" class="nav-link">About</a>
-    <a href="index.html#work"  class="nav-link">Work</a>
-    <a href="tools.html"       class="nav-link active">Tools</a>
-    <a href="https://github.com/Thassanai546" class="nav-link" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://www.linkedin.com/in/thassanai-mcc/" class="nav-link" target="_blank" rel="noopener">LinkedIn ↗</a>
-  </div>
-</nav>
+<div id="nav-placeholder"></div>
 
 <!-- HEADER -->
 <header class="header">
@@ -632,55 +644,13 @@ footer {
   </div>
 </section>
 
+<button id="scroll-top" aria-label="Scroll to top">↑</button>
+
 <footer>
   <span>Look After Yourself -Thassanai McCabe</span>
   <span>2026</span>
 </footer>
 
-<script>
-(async () => {
-  const el = document.getElementById('cve-inner');
-  const escHtml = s => s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-  try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 8000);
-    const r = await fetch(
-      'https://services.nvd.nist.gov/rest/json/cves/2.0?hasKev',
-      { signal: ctrl.signal }
-    );
-    clearTimeout(timer);
-    if (!r.ok) throw new Error();
-    const d = await r.json();
-
-    const items = d.vulnerabilities
-      .sort((a, b) => new Date(b.cve.published) - new Date(a.cve.published))
-      .map(({ cve }) => {
-        const id   = escHtml(cve.id);
-        const desc = escHtml((cve.descriptions.find(x => x.lang === 'en')?.value ?? '').slice(0, 100));
-        const m    = cve.metrics;
-        const score = m?.cvssMetricV31?.[0]?.cvssData?.baseScore
-                   ?? m?.cvssMetricV30?.[0]?.cvssData?.baseScore
-                   ?? m?.cvssMetricV2?.[0]?.cvssData?.baseScore
-                   ?? '?';
-        return `<span class="cve-item-id">${id}</span>`
-             + `<span class="cve-item-score">CVSS&nbsp;${score}</span>`
-             + `<span class="cve-item-desc">${desc}</span>`
-             + `<span class="cve-item-sep">//</span>`;
-      }).join('');
-
-    el.innerHTML = items + items;
-
-    const halfW    = el.scrollWidth / 2;
-    const duration = Math.max(40, halfW / 90);
-    el.style.animationDuration = duration + 's';
-  } catch {
-    document.querySelector('.cve-ticker').style.display = 'none';
-  }
-})();
-</script>
+<script src="components.js"></script>
 </body>
 </html>

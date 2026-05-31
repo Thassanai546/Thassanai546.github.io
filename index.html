@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Thassanai McCabe — Cyber Threat Intelligence Researcher at ReliaQuest, Ireland.">
-<title>Thassanai McCabe</title>
+<title>Thassanai McCabe - Home</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="icon" type="image/png" href="images/PC_.png">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@ nav {
 
 .nav-link {
   display: block;
-  width: 7.5rem;
+  width: 7rem;
   padding: 0.35rem 0.5rem;
   font-size: 0.76rem;
   letter-spacing: 0.12em;
@@ -161,6 +161,7 @@ nav {
 .nav-box .nav-link:nth-child(4) { animation-delay:  -3s; }
 .nav-box .nav-link:nth-child(5) { animation-delay:  -4s; }
 .nav-box .nav-link:nth-child(6) { animation-delay:  -5s; }
+.nav-box .nav-link:nth-child(7) { animation-delay:  -6s; }
 
 /* ─── HEADER ───────────────────────────────────────────── */
 .header {
@@ -229,6 +230,9 @@ nav {
   background: var(--border);
   flex: 1;
 }
+
+/* ─── HIGHLIGHT ────────────────────────────────────────── */
+.hl { color: var(--green); font-weight: 400; }
 
 /* ─── ABOUT ────────────────────────────────────────────── */
 .about p {
@@ -317,6 +321,36 @@ footer {
   border-top: 1px solid var(--border);
 }
 
+/* ─── SCROLL TO TOP ─────────────────────────────────────── */
+#scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid var(--green);
+  color: var(--green);
+  background: var(--bg);
+  font-family: var(--f);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, background 0.12s, color 0.12s, border-color 0.12s;
+  z-index: 99;
+}
+#scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+#scroll-top:hover {
+  background: var(--pink);
+  color: var(--bg);
+  border-color: var(--pink);
+}
+
 /* ─── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 560px) {
   html { font-size: 13px; }
@@ -343,16 +377,7 @@ footer {
 </div>
 
 <!-- NAV -->
-<nav aria-label="Main navigation">
-  <div class="nav-box">
-    <a href="#"           class="nav-link">Blog</a>
-    <a href="#about"      class="nav-link">About</a>
-    <a href="#work"       class="nav-link">Work</a>
-    <a href="tools.html"  class="nav-link">Tools</a>
-    <a href="https://github.com/Thassanai546" class="nav-link" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://www.linkedin.com/in/thassanai-mcc/" class="nav-link" target="_blank" rel="noopener">LinkedIn ↗</a>
-  </div>
-</nav>
+<div id="nav-placeholder"></div>
 
 <!-- HEADER -->
 <header class="header">
@@ -373,16 +398,16 @@ footer {
       Originally from Thailand and now based in Ireland, my cybersecurity journey began in Incident Response at ReliaQuest. In the SOC, my days were defined by high-pressure environments, live triage, and containing active compromises. I spent countless hours digging through raw event logs, tracing lateral movement, and analyzing endpoint data to eject threat actors from enterprise networks. I learned an incredible amount from my peers and mentors in this role (Thank you SGA &lt;3).
     </p>
     <p>
-      Witnessing these attacks firsthand taught me how attackers operate, but it also sparked a big shift in my perspective. Evicting an attacker solves today's emergency, but true defense requires understanding where they are going tomorrow. I wanted to move from a reactive posture of stopping the bleeding to a proactive one.
+      Witnessing these attacks firsthand taught me how attackers operate, but it also sparked a big shift in my perspective. Evicting an attacker solves today's emergency, but <span class="hl">true defense requires understanding where they are going tomorrow</span>. I wanted to move from a <span class="hl">reactive posture of stopping the bleeding to a proactive one</span>.
     </p>
     <p>
       This realization drove my transition into Cyber Threat Intelligence.
     </p>
     <h3>What I Do Today</h3>
     <p>
-      As a Threat Intelligence Researcher at ReliaQuest, I use my frontline IR experience to track the adversary for the wider security community.
-      My work focuses on looking outside the enterprise perimeter to study the threat actors behind the keyboard, their financial motives,
-      and their global infrastructure.
+      As a Threat Intelligence Researcher, I use my frontline IR experience to <span class="hl">track the adversary for the wider security community</span>.
+      My work focuses on looking outside the enterprise perimeter to study the <span class="hl">threat actors behind the keyboard, their financial motives,
+      and their global infrastructure</span>.
     </p>
     <p>
       Operating under the broader threat research umbrella allows me to collaborate closely with our threat hunting and detection engineering teams.
@@ -391,7 +416,7 @@ footer {
     </p>
     <p>
       One of the most rewarding outcomes of this work is seeing original research I produce get shared and discussed across the industry,
-      from major technical news vendors like BleepingComputer to global cybersecurity forums.
+      from major technical news vendors like <span class="hl">BleepingComputer</span> to global cybersecurity forums.
     </p>
     <h3>Life in CTI</h3>
     <p>&#10686; Mapping out command-and-control (C2) networks, tracking bulletproof hosting providers, and identifying malicious domains before they are weaponized in active campaigns.
@@ -473,55 +498,13 @@ footer {
 
 <img src="images/29052026.gif" alt="" class="footer-gif">
 
+<button id="scroll-top" aria-label="Scroll to top">↑</button>
+
 <footer>
   <span>Look After Yourself -Thassanai McCabe</span>
   <span>2026</span>
 </footer>
 
-<script>
-(async () => {
-  const el = document.getElementById('cve-inner');
-  const escHtml = s => s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-  try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 8000);
-    const r = await fetch(
-      'https://services.nvd.nist.gov/rest/json/cves/2.0?hasKev',
-      { signal: ctrl.signal }
-    );
-    clearTimeout(timer);
-    if (!r.ok) throw new Error();
-    const d = await r.json();
-
-    const items = d.vulnerabilities
-      .sort((a, b) => new Date(b.cve.published) - new Date(a.cve.published))
-      .map(({ cve }) => {
-        const id   = escHtml(cve.id);
-        const desc = escHtml((cve.descriptions.find(x => x.lang === 'en')?.value ?? '').slice(0, 100));
-        const m    = cve.metrics;
-        const score = m?.cvssMetricV31?.[0]?.cvssData?.baseScore
-                   ?? m?.cvssMetricV30?.[0]?.cvssData?.baseScore
-                   ?? m?.cvssMetricV2?.[0]?.cvssData?.baseScore
-                   ?? '?';
-        return `<span class="cve-item-id">${id}</span>`
-             + `<span class="cve-item-score">CVSS&nbsp;${score}</span>`
-             + `<span class="cve-item-desc">${desc}</span>`
-             + `<span class="cve-item-sep">//</span>`;
-      }).join('');
-
-    el.innerHTML = items + items;
-
-    const halfW    = el.scrollWidth / 2;
-    const duration = Math.max(40, halfW / 90);
-    el.style.animationDuration = duration + 's';
-  } catch {
-    document.querySelector('.cve-ticker').style.display = 'none';
-  }
-})();
-</script>
+<script src="components.js"></script>
 </body>
 </html>
