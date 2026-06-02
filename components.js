@@ -17,6 +17,7 @@
     ${a('index.html#work',  'Work',       '')}
     ${a('tools.html',       'Tools',      'tools.html')}
     ${a('ff7.html',         'FF7',        'ff7.html')}
+    <a href="https://thassanai546.github.io/Ransom_Radar/" class="nav-link" target="_blank" rel="noopener">Ransom Radar &#8599;</a>
     <a href="https://github.com/Thassanai546" class="nav-link" target="_blank" rel="noopener">GitHub &#8599;</a>
     <a href="https://www.linkedin.com/in/thassanai-mcc/" class="nav-link" target="_blank" rel="noopener">LinkedIn &#8599;</a>
   </div>
@@ -72,8 +73,10 @@
                + `<span class="cve-item-sep">//</span>`;
         }).join('');
 
+      document.getElementById('cve-loading')?.remove();
       el.innerHTML = items + items;
       el.style.animationDuration = Math.max(40, el.scrollWidth / 2 / 90) + 's';
+      el.classList.add('running');
     } catch {
       const ticker = document.querySelector('.cve-ticker');
       if (ticker) ticker.style.display = 'none';
