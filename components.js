@@ -12,7 +12,7 @@
     navPlaceholder.outerHTML = `
 <nav aria-label="Main navigation">
   <div class="nav-box">
-    ${a('index.html#',      'Blog',       '')}
+    <a href="https://thass546.blogspot.com/" class="nav-link" target="_blank" rel="noopener">Blog &#8599;</a>
     ${a('index.html#about', 'About',      '')}
     ${a('index.html#work',  'Work',       '')}
     ${a('tools.html',       'Tools',      'tools.html')}
