@@ -26,7 +26,7 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 
 /* ─── HEADER ───────────────────────────────────────────── */
 .header-name { display: flex; align-items: center; gap: 0.5rem; }
-.header-star { height: 1.5em; width: auto; flex-shrink: 0; }
+.header-star { height: 1.5em; width: auto; flex-shrink: 0; cursor: pointer; }
 
 .header-meta a {
   color: var(--blue);
@@ -82,13 +82,42 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 .work-link:hover { background: var(--pink); color: var(--bg); border-color: var(--pink); }
 
 /* ─── FOOTER GIF ───────────────────────────────────────── */
-.footer-gif { display: block; margin: 0 auto; width: 100px; height: auto; }
+.footer-gif { display: block; margin: 0 auto; width: 150px; height: auto; }
 
 /* ─── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 560px) {
   body { padding-top: calc(2.5rem + var(--ticker-h)); }
   .work-row { grid-template-columns: 2.2rem 1fr; }
   .work-links { display: none; }
+}
+
+/* ─── ELDEN RING NEW LOCATION OVERLAY ──────────────────── */
+#er-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.88);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none;
+}
+#er-overlay.active {
+  display: flex;
+  animation: er-reveal 5.5s ease forwards;
+}
+#er-overlay img {
+  max-width: min(90vw, 900px);
+  max-height: 80vh;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(180, 148, 72, 0.45));
+}
+@keyframes er-reveal {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  72%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 </style>
 </head>
@@ -235,7 +264,7 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   </div>
 </section>
 
-<img src="images/29052026.gif" alt="" class="footer-gif">
+<img src="images/bonfire-dark-souls.gif" alt="" class="footer-gif">
 
 <button id="scroll-top" aria-label="Scroll to top">↑</button>
 
@@ -243,6 +272,28 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   <span>Look After Yourself -Thassanai McCabe</span>
   <span>2026</span>
 </footer>
+
+<!-- ELDEN RING NEW LOCATION OVERLAY -->
+<div id="er-overlay" aria-hidden="true">
+  <img src="images/SF.png" alt="">
+</div>
+
+<script>
+(function () {
+  var overlay = document.getElementById('er-overlay');
+  var sound   = new Audio('sounds/Elden Ring New Location [Sound Effect].mp3');
+
+  document.querySelector('.header-star').addEventListener('click', function () {
+    if (overlay.classList.contains('active')) return;
+    sound.currentTime = 0;
+    sound.play().catch(function () {});
+    overlay.classList.add('active');
+    overlay.addEventListener('animationend', function () {
+      overlay.classList.remove('active');
+    }, { once: true });
+  });
+})();
+</script>
 
 <script src="components.js"></script>
 </body>

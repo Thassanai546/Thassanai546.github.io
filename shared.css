@@ -164,11 +164,12 @@ nav { margin-bottom: 4rem; }
 }
 
 .header-name {
-  font-size: 1.75rem;
+  font-size: 2.2rem;
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.15;
   margin-bottom: 0.5rem;
+  color: var(--fg);
 }
 
 .header-meta {
