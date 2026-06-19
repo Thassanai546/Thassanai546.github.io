@@ -67,8 +67,8 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 
 .work-title { font-size: 0.88rem; font-weight: 500; margin-bottom: 0.22rem; color: var(--blue); }
 .work-desc  { font-size: 0.77rem; color: var(--dim); line-height: 1.6; margin-bottom: 0.28rem; }
-.work-stack { font-size: 0.69rem; color: var(--faint); }
-.work-stack span + span::before { content: ' · '; }
+.work-stack { font-size: 0.69rem; display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.1rem; }
+.work-stack span { color: var(--pink); border: 1px solid rgba(255,0,153,0.28); padding: 0.05rem 0.4rem; }
 
 .work-links { display: flex; gap: 0.5rem; align-items: flex-start; padding-top: 0.15rem; }
 .work-link {
@@ -80,6 +80,34 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   white-space: nowrap;
 }
 .work-link:hover { background: var(--pink); color: var(--bg); border-color: var(--pink); }
+
+/* ─── LATEST ENTRY SHEEN ───────────────────────────────── */
+.work-row--latest {
+  position: relative;
+  border-left: 2px solid var(--pink);
+  overflow: hidden;
+}
+.work-row--latest::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.07) 50%, transparent 65%);
+  animation: sheen 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sheen {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(220%); }
+}
+.work-new {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: var(--bg);
+  background: var(--pink);
+  padding: 0.06rem 0.38rem;
+  vertical-align: middle;
+  margin-left: 0.55rem;
+}
 
 /* ─── FOOTER GIF ───────────────────────────────────────── */
 .footer-gif { display: block; margin: 0 auto; width: 150px; height: auto; }
@@ -191,11 +219,23 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 <section class="block" id="work">
   <div class="block-label">Recent Publications</div>
 
-  <div class="work-row">
+  <div class="work-row work-row--latest">
     <span class="work-idx">001</span>
     <div>
-      <div class="work-title">Help-Desk Lures Drop KongTuke's Evolved ModeloRAT</div>
-      <div class="work-desc">KongTuke exploits Microsoft Teams external federation to impersonate help-desk staff — using Unicode contact spoofing — to deliver a portable Python environment via Dropbox before executing the full attack chain through a single pasted PowerShell command. Within five minutes, four persistence mechanisms anchor the ModeloRAT implant, including a SYSTEM-level scheduled task that standard remediation almost always misses, backed by three independent C2 paths built to survive takedown. The group rotated through five Microsoft 365 tenants over 45 days to stay ahead of blocklisting &mdash; May 2026.</div>
+      <div class="work-title">Klue Integration Abused in Salesforce CRM Data Theft<span class="work-new">NEW</span></div>
+      <div class="work-desc">Attackers compromised a Klue competitive-intelligence service account, minted OAuth tokens, and walked straight into connected Salesforce environments. For nearly 24 hours they quietly pulled CRM records (account details, contacts, deal outcomes, pricing data) before dropping the patience act and firing off close to 1,000 REST API calls in a single 15-minute window, paging through results via Salesforce's QueryMore cursor from four distinct IP addresses. Jun 2026.</div>
+      <div class="work-stack"><span>CRM Security</span><span>OAuth Abuse</span><span>API Exploitation</span><span>Data Exfiltration</span></div>
+    </div>
+    <div class="work-links">
+      <a href="https://reliaquest.com/blog/threat-spotlight-integration-abused-in-crm-data-theft" class="work-link" target="_blank" rel="noopener">report ↗</a>
+    </div>
+  </div>
+
+  <div class="work-row">
+    <span class="work-idx">002</span>
+    <div>
+      <div class="work-title">Help-Desk Lures Drop KongTuke&rsquo;s Evolved ModeloRAT</div>
+      <div class="work-desc">KongTuke abuses Microsoft Teams external federation to impersonate help-desk staff, using Unicode contact spoofing to look legitimate, then walks victims through downloading a portable Python environment via Dropbox and running a single pasted PowerShell command that kicks off the whole chain. Within five minutes, four persistence mechanisms lock in the ModeloRAT implant, including a SYSTEM-level scheduled task that standard remediation almost always misses, backed by three independent C2 paths built to survive a takedown. The group rotated through five Microsoft 365 tenants over 45 days to stay ahead of blocks. May 2026.</div>
       <div class="work-stack"><span>Malware Analysis</span><span>Threat Intelligence</span><span>Initial Access Brokers</span></div>
     </div>
     <div class="work-links">
@@ -204,10 +244,10 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   </div>
 
   <div class="work-row">
-    <span class="work-idx">002</span>
+    <span class="work-idx">003</span>
     <div>
       <div class="work-title">DeepLoad Malware Pairs ClickFix Delivery with AI-Generated Evasion</div>
-      <div class="work-desc">DeepLoad arrives via ClickFix and buries its functional code beneath thousands of AI-generated meaningless variable assignments before executing entirely in memory. It injects into Windows&rsquo; LockAppHost.exe via APC injection while independently deploying a credential stealer and malicious browser extension to capture both stored passwords and live session tokens. A hidden WMI event subscription acts as a dead-man&rsquo;s switch &mdash; confirmed to re-execute the full attack chain three days after a cleaned host &mdash; and any connected USB drive is silently seeded with 40+ disguised installer files &mdash; Mar 2026.</div>
+      <div class="work-desc">DeepLoad arrives via ClickFix and buries its functional code beneath thousands of AI-generated meaningless variable assignments before running entirely in memory. It injects into Windows' LockAppHost.exe via APC injection while separately deploying a credential stealer and a malicious browser extension to capture stored passwords and live session tokens. A hidden WMI event subscription acts as a dead-man's switch, confirmed to re-execute the full attack chain three days after a cleaned host, and any connected USB drive gets seeded with 40+ disguised installer files. Mar 2026.</div>
       <div class="work-stack"><span>Malware Analysis</span><span>ClickFix</span><span>Evasion Techniques</span><span>WMI</span></div>
     </div>
     <div class="work-links">
@@ -216,10 +256,10 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   </div>
 
   <div class="work-row">
-    <span class="work-idx">003</span>
+    <span class="work-idx">004</span>
     <div>
       <div class="work-title">What's Trending: Top Cyber Attacker Techniques, Sep&ndash;Nov 2025</div>
-      <div class="work-desc">Quarterly trend analysis for September&ndash;November 2025, headlined by BaoLoader manufacturing legitimacy through 26 real code-signing certificates obtained across seven years. Infostealer detections fell 69% following infrastructure takedowns, but Vidar 2.0 immediately pivoted to harvest enterprise cloud credentials cached on unmanaged personal devices. The ransomware finding is stark: one CVE with patches available since early 2025 still produced 188 victims in October alone, and professional, scientific, and technical services firms saw a 57% spike in targeting &mdash; Jan 2026.</div>
+      <div class="work-desc">Quarterly trend analysis for September&ndash;November 2025. BaoLoader led activity for the period, forging legitimacy through 26 real code-signing certificates built up across seven years. Infostealer detections dropped 69% after infrastructure takedowns, but Vidar 2.0 shifted focus to enterprise cloud credentials cached on personal devices to compensate. One CVE with a patch out since early 2025 still claimed 188 victims in October alone, and professional, scientific, and technical services firms saw a 57% spike in targeting. Jan 2026.</div>
       <div class="work-stack"><span>Threat Trends</span><span>MITRE ATT&amp;CK</span><span>Ransomware</span><span>Initial Access</span></div>
     </div>
     <div class="work-links">
@@ -228,10 +268,10 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   </div>
 
   <div class="work-row">
-    <span class="work-idx">004</span>
+    <span class="work-idx">005</span>
     <div>
       <div class="work-title">Storm-0249: Precision Endpoint Exploitation via EDR Abuse</div>
-      <div class="work-desc">Storm-0249 delivers a malicious MSI from a spoofed Microsoft domain that exploits Windows Installer&rsquo;s SYSTEM privileges to plant a trojanized DLL alongside a legitimate SentinelOne executable, hijacking the EDR agent itself via sideloading. All subsequent reconnaissance, C2 traffic, and MachineGuid extraction &mdash; used to bind ransomware encryption keys to the specific victim machine &mdash; flow through the compromised security tool, rendering the activity indistinguishable from normal EDR telemetry. The technique is platform-agnostic and compresses the attacker&rsquo;s timeline from weeks to days &mdash; Dec 2025.</div>
+      <div class="work-desc">Storm-0249 delivers a malicious MSI from a spoofed Microsoft domain that exploits Windows Installer's SYSTEM privileges to drop a trojanized DLL alongside a legitimate SentinelOne executable, hijacking the EDR agent via sideloading. All subsequent reconnaissance, C2 traffic, and MachineGuid extraction (used to bind ransomware encryption keys to the victim machine) then flow through that compromised security tool, looking identical to normal EDR activity. The approach works across EDR platforms and cuts the attacker's timeline from weeks to days. Dec 2025.</div>
       <div class="work-stack"><span>Threat Actor Tracking</span><span>EDR Abuse</span><span>DLL Sideloading</span><span>ClickFix</span></div>
     </div>
     <div class="work-links">
@@ -240,10 +280,10 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   </div>
 
   <div class="work-row">
-    <span class="work-idx">005</span>
+    <span class="work-idx">006</span>
     <div>
       <div class="work-title">Speed, Scale, and Stealth: How Axios Powers Automated Phishing</div>
-      <div class="work-desc">Documents a 241% surge in Axios user-agent activity between June and August 2025, with the HTTP library accounting for 24.44% of all flagged user-agent traffic as attackers weaponized its async workflows for simultaneous multi-stage credential theft. Campaigns embedded QR codes inside PDF attachments, redirecting victims to spoofed Outlook portals where Axios middleware interceptors hijacked session tokens and MFA codes in real time via the SAS BeginAuth mechanism. Paired with Microsoft Direct Send, the technique achieved a 70% credential-theft success rate versus 9.3% for traditional phishing, with lures themed around PAYMENT, BONUS, and PAYSLIP to maximise engagement &mdash; Sep 2025.</div>
+      <div class="work-desc">Between June and August 2025, Axios user-agent activity surged 241%, with the HTTP library accounting for 24.44% of all flagged traffic as attackers leaned into its async workflows to run multi-stage credential theft in parallel. Campaigns embedded QR codes inside PDF attachments that sent victims to spoofed Outlook portals, where Axios middleware hijacked session tokens and MFA codes via the SAS BeginAuth mechanism. Paired with Microsoft Direct Send, the hit rate reached 70% versus 9.3% for traditional phishing, with lures built around PAYMENT, BONUS, and PAYSLIP subject lines. Sep 2025.</div>
       <div class="work-stack"><span>Phishing</span><span>Credential Theft</span><span>Automation</span><span>Microsoft 365</span></div>
     </div>
     <div class="work-links">
@@ -252,10 +292,10 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
   </div>
 
   <div class="work-row">
-    <span class="work-idx">006</span>
+    <span class="work-idx">007</span>
     <div>
       <div class="work-title">First Look at CVE-2025-54309: Dissecting the Latest CrushFTP Exploit</div>
-      <div class="work-desc">First published analysis of CVE-2025-54309, a CrushFTP AS2 validation flaw that allows unauthenticated administrative access through an alternative communication channel whose security controls lag the primary HTTPS endpoint. Attackers exploited a critical discrepancy: server logs displayed access denied while a crafted AS2 header silently granted admin access, which was then used to enumerate the virtual file system and attempt account backdooring via setUserItem commands. On July 22, 2025, a full RCE exploit was advertised on dark web forums; IP allowlisting and policy-based controls blocked the final persistence layer, offering a practical defensive template &mdash; Jul 2025.</div>
+      <div class="work-desc">CVE-2025-54309 is a CrushFTP AS2 validation flaw that opens a path to unauthenticated admin access through an alternative communication channel with weaker controls than the primary HTTPS endpoint. The key tell: server logs showed access denied while a crafted AS2 header had already granted full admin rights, which attackers used to enumerate the file system and attempt backdooring via setUserItem commands. A full RCE exploit appeared on dark web forums on July 22, 2025; IP allowlisting and policy controls stopped the final persistence step. Jul 2025.</div>
       <div class="work-stack"><span>CVE Analysis</span><span>Vulnerability Research</span><span>CrushFTP</span><span>Exploit Development</span></div>
     </div>
     <div class="work-links">
