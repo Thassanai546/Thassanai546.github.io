@@ -10,9 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-/* ─── BODY: offset for fixed ticker ────────────────────── */
-body { padding-top: calc(3.5rem + var(--ticker-h)); }
-
 /* ─── CVE LOADING PLACEHOLDER ──────────────────────────── */
 .cve-loading {
   position: absolute;
@@ -81,6 +78,43 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 }
 .work-link:hover { background: var(--pink); color: var(--bg); border-color: var(--pink); }
 
+/* ─── PUBLICATIONS CTA BUTTON ──────────────────────────── */
+.pub-cta { margin-bottom: 2rem; margin-top: -1.5rem; }
+
+@keyframes pub-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(255,0,153,0.4), 0 0 18px rgba(255,0,153,0.15); }
+  50%       { box-shadow: 0 0 12px rgba(255,0,153,0.7), 0 0 32px rgba(255,0,153,0.3); }
+}
+
+.pub-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  border: 1px solid var(--pink);
+  color: var(--pink);
+  padding: 0.45rem 1.6rem;
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.12s, color 0.12s;
+  animation: pub-glow 2.5s ease-in-out infinite;
+}
+.pub-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+  animation: sheen 2s ease-in-out infinite;
+  pointer-events: none;
+}
+.pub-btn:hover {
+  background: var(--pink);
+  color: var(--bg);
+  animation: none;
+  box-shadow: 0 0 20px rgba(255,0,153,0.5);
+}
+
 /* ─── LATEST ENTRY SHEEN ───────────────────────────────── */
 .work-row--latest {
   position: relative;
@@ -114,7 +148,6 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 
 /* ─── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 560px) {
-  body { padding-top: calc(2.5rem + var(--ticker-h)); }
   .work-row { grid-template-columns: 2.2rem 1fr; }
   .work-links { display: none; }
 }
@@ -153,10 +186,12 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
 
 <!-- CVE TICKER -->
 <div class="cve-ticker" role="marquee" aria-label="Live CVE threat feed">
-  <div class="cve-label"><span class="cve-label-dot"></span>Actively Exploited:</div>
-  <div class="cve-track">
-    <span class="cve-loading" id="cve-loading">Loading threat feed&hellip;</span>
-    <div class="cve-inner" id="cve-inner"></div>
+  <div class="ticker-row">
+    <div class="cve-label"><span class="cve-label-dot"></span><span id="cve-label-text">Latest CVEs:</span></div>
+    <div class="cve-track">
+      <span class="cve-loading" id="cve-loading">Loading threat feed&hellip;</span>
+      <div class="cve-inner" id="cve-inner"></div>
+    </div>
   </div>
 </div>
 
@@ -172,6 +207,10 @@ body { padding-top: calc(3.5rem + var(--ticker-h)); }
     <a href="https://www.reliaquest.com" target="_blank" rel="noopener">ReliaQuest</a> &middot; BSc Cybercrime &amp; IT Security, First Class Honours
   </div>
 </header>
+
+<div class="pub-cta">
+  <a href="#work" class="pub-btn">Recent Publications</a>
+</div>
 
 <!-- ABOUT -->
 <section class="block" id="about">
