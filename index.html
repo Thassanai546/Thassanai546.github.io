@@ -79,7 +79,7 @@
 .work-link:hover { background: var(--pink); color: var(--bg); border-color: var(--pink); }
 
 /* ─── PUBLICATIONS CTA BUTTON ──────────────────────────── */
-.pub-cta { margin-bottom: 2rem; margin-top: -1.5rem; }
+.pub-cta { margin-bottom: 2rem; margin-top: -1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
 
 @keyframes pub-glow {
   0%, 100% { box-shadow: 0 0 6px rgba(255,0,153,0.4), 0 0 18px rgba(255,0,153,0.15); }
@@ -113,6 +113,40 @@
   color: var(--bg);
   animation: none;
   box-shadow: 0 0 20px rgba(255,0,153,0.5);
+}
+
+@keyframes proj-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(0,255,136,0.4), 0 0 18px rgba(0,255,136,0.15); }
+  50%       { box-shadow: 0 0 12px rgba(0,255,136,0.7), 0 0 32px rgba(0,255,136,0.3); }
+}
+
+.proj-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 0.45rem 1.6rem;
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.12s, color 0.12s;
+  animation: proj-glow 2.5s ease-in-out infinite;
+}
+.proj-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+  animation: sheen 2s ease-in-out infinite;
+  pointer-events: none;
+}
+.proj-btn:hover {
+  background: var(--green);
+  color: var(--bg);
+  animation: none;
+  box-shadow: 0 0 20px rgba(0,255,136,0.5);
 }
 
 /* ─── LATEST ENTRY SHEEN ───────────────────────────────── */
@@ -210,6 +244,7 @@
 
 <div class="pub-cta">
   <a href="#work" class="pub-btn">Recent Publications</a>
+  <a href="https://github.com/Thassanai546/PokeChronicle" class="proj-btn" target="_blank" rel="noopener">Recent Project ↗</a>
 </div>
 
 <!-- ABOUT -->
