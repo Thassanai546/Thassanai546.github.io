@@ -16,6 +16,7 @@
     ${a('index.html#about', 'About',      '')}
     ${a('index.html#work',  'Work',       '')}
     ${a('tools.html',       'Tools',      'tools.html')}
+    ${a('kev.html',         'KEV',        'kev.html')}
     ${a('ff7.html',         'FF7',        'ff7.html')}
     <a href="https://thassanai546.github.io/Ransom_Radar/" class="nav-link" target="_blank" rel="noopener">Ransom Radar &#8599;</a>
   </div>
@@ -54,8 +55,8 @@
     // Inject second ticker row (hidden until "both" mode)
     ticker.insertAdjacentHTML('beforeend',
       `<div id="ticker-row-2" class="ticker-row" style="display:none">` +
-      `<div class="cve-label"><span class="cve-label-dot"></span><span>Latest News:</span></div>` +
-      `<div class="cve-track"><div class="cve-inner" id="cve-inner-2"></div></div></div>`
+      `<div class="cve-label"><span class="cve-label-dot"></span><span>Tech News</span></div>` +
+      `<div class="cve-track"><span class="cve-loading" id="news-loading">Loading tech news&hellip;</span><div class="cve-inner" id="cve-inner-2"></div></div></div>`
     );
     const inner2 = document.getElementById('cve-inner-2');
     const row2   = document.getElementById('ticker-row-2');
@@ -64,9 +65,9 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-    let mode = localStorage.getItem('tickerMode') || 'cve';
+    let mode = localStorage.getItem('tickerMode') || 'both';
 
-    const modeLabel = { cve: 'Latest CVEs:', news: 'Latest News:', both: 'CVEs + News:' };
+    const modeLabel = { cve: 'CVE Activity', news: 'Tech News', both: 'CVE Activity' };
 
     function syncUI() {
       const labelEl = document.getElementById('cve-label-text');
@@ -79,38 +80,38 @@
     syncUI();
 
     function setItems(el, html) {
-      document.getElementById('cve-loading')?.remove();
+      el.closest('.cve-track')?.querySelector('.cve-loading')?.remove();
       el.innerHTML = html + html;
       el.style.animationDuration = Math.max(40, el.scrollWidth / 2 / 90) + 's';
       el.classList.add('running');
     }
 
-    // ── GitHub Advisory Database (CORS-friendly, no auth) ────
-    // Fetch 100, filter to CVE-assigned only, take 30.
+    // ── CISA KEV — recently actively exploited CVEs ───────────
     async function fetchCVEs() {
-      const ctrl  = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 8000);
-      try {
-        const r = await fetch(
-          'https://api.github.com/advisories?type=reviewed&per_page=100&sort=published&direction=desc',
-          { signal: ctrl.signal, headers: { 'Accept': 'application/vnd.github+json' } }
-        );
-        if (!r.ok) throw new Error('gh-advisory');
-        const items = await r.json();
-        return items
-          .filter(v => v.cve_id && v.summary)
-          .slice(0, 30)
-          .map(v => {
-            const score = v.cvss?.score;
-            const sev   = esc(v.severity || '');
-            return `<span class="cve-item-id">${esc(v.cve_id)}</span>`
-                 + `<span class="cve-item-score">${score ? `CVSS&nbsp;${score}` : sev}</span>`
-                 + `<span class="cve-item-desc">${esc(v.summary.slice(0, 100))}</span>`
+      const sources = [
+        'https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json',
+        'https://raw.githubusercontent.com/EugenMayer/cisa-known-exploited-mirror/main/known_exploited_vulnerabilities.json',
+        'https://raw.githubusercontent.com/aboutcode-org/aboutcode-mirror-kev/main/known_exploited_vulnerabilities.json',
+      ];
+      for (const url of sources) {
+        const ctrl  = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 8000);
+        try {
+          const r = await fetch(url, { signal: ctrl.signal });
+          clearTimeout(timer);
+          if (!r.ok) continue;
+          const data = await r.json();
+          const vulns = (data.vulnerabilities || []).slice().reverse().slice(0, 30);
+          return vulns.map(v => {
+            const tag = v.knownRansomwareCampaignUse === 'Known' ? 'Ransomware' : esc(v.vendorProject || '');
+            return `<span class="cve-item-id">${esc(v.cveID)}</span>`
+                 + `<span class="cve-item-score">${tag}</span>`
+                 + `<span class="cve-item-desc">${esc((v.shortDescription || v.vulnerabilityName || '').slice(0, 100))}</span>`
                  + `<span class="cve-item-sep">//</span>`;
           }).join('');
-      } finally {
-        clearTimeout(timer);
+        } catch { clearTimeout(timer); }
       }
+      throw new Error('kev-fetch-failed');
     }
 
     // ── Hacker News top stories (Firebase API) ───────────────
