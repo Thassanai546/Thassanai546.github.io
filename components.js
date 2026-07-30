@@ -13,19 +13,20 @@
 <nav aria-label="Main navigation">
   <div class="nav-row nav-row-pages">
     <a href="https://thass546.blogspot.com/" class="nav-link" target="_blank" rel="noopener">Blog &#8599;</a>
-    ${a('index.html#about', 'About',      '')}
-    ${a('index.html#work',  'Work',       '')}
-    ${a('tools.html',       'Tools',      'tools.html')}
-    ${a('kev.html',         'KEV',        'kev.html')}
-    ${a('ff7.html',         'FF7',        'ff7.html')}
-    <a href="https://thassanai546.github.io/Ransom_Radar/" class="nav-link" target="_blank" rel="noopener">Ransom Radar &#8599;</a>
+    ${a('index.html#about', 'About', '')}
+    ${a('index.html#work',  'Work',  '')}
   </div>
   <div class="nav-row nav-row-links">
+    ${a('tools.html', 'Tools', 'tools.html')}
+    ${a('kev.html',   'KEV',   'kev.html')}
+    ${a('ff7.html',   'FF7',   'ff7.html')}
     <a href="https://github.com/Thassanai546" class="nav-link" target="_blank" rel="noopener">GitHub &#8599;</a>
     <a href="https://www.linkedin.com/in/thassanai-mcc/" class="nav-link" target="_blank" rel="noopener">LinkedIn &#8599;</a>
-    <button id="ticker-toggle" class="nav-link" aria-label="Switch ticker feed"></button>
   </div>
 </nav>`;
+    document.body.insertAdjacentHTML('afterbegin',
+      `<button id="ticker-toggle" aria-label="Switch ticker feed"></button>`
+    );
   }
 
   /* ─── SCROLL TO TOP ────────────────────────────────────────
