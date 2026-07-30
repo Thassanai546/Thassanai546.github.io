@@ -236,6 +236,33 @@ footer {
   border-top: 1px solid var(--border);
 }
 
+/* ─── POWERED BY ────────────────────────────────────────── */
+.powered-by {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+.powered-by a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--faint);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+}
+.powered-by a:hover { color: var(--dim); }
+.powered-by img {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+  filter: grayscale(1);
+  transition: opacity 0.15s, filter 0.15s;
+}
+.powered-by a:hover img { opacity: 1; filter: grayscale(0); }
+
 /* ─── SCROLL TO TOP ─────────────────────────────────────── */
 #scroll-top {
   position: fixed;
