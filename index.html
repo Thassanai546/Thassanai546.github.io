@@ -149,6 +149,40 @@
   box-shadow: 0 0 20px rgba(0,255,136,0.5);
 }
 
+@keyframes blog-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(0,153,255,0.4), 0 0 18px rgba(0,153,255,0.15); }
+  50%       { box-shadow: 0 0 12px rgba(0,153,255,0.7), 0 0 32px rgba(0,153,255,0.3); }
+}
+
+.blog-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  padding: 0.45rem 1.6rem;
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.12s, color 0.12s;
+  animation: blog-glow 2.5s ease-in-out infinite;
+}
+.blog-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+  animation: sheen 2s ease-in-out infinite;
+  pointer-events: none;
+}
+.blog-btn:hover {
+  background: var(--blue);
+  color: var(--bg);
+  animation: none;
+  box-shadow: 0 0 20px rgba(0,153,255,0.5);
+}
+
 /* ─── LATEST ENTRY SHEEN ───────────────────────────────── */
 .work-row--latest {
   position: relative;
@@ -245,6 +279,7 @@
 <div class="pub-cta">
   <a href="#work" class="pub-btn">Recent Publications</a>
   <a href="https://github.com/Thassanai546/PokeChronicle" class="proj-btn" target="_blank" rel="noopener">Recent Project ↗</a>
+  <a href="https://thass546.blogspot.com/2026/07/an-inspiration-margaret-hamilton.html" class="blog-btn" target="_blank" rel="noopener">Recent Blog Post ↗</a>
 </div>
 
 <!-- ABOUT -->
